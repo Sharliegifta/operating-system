@@ -1,0 +1,29 @@
+// Task 19: Process Synchronization using Mutex Locks
+#include <stdio.h>
+#include <pthread.h>
+
+pthread_mutex_t lock;
+
+void *printMessage(void *msg) {
+    pthread_mutex_lock(&lock);
+    printf("%s\n", (char *)msg);
+    pthread_mutex_unlock(&lock);
+    return NULL;
+}
+
+int main() {
+    pthread_t thread1, thread2;
+    char *message1 = "Hello from thread 1!";
+    char *message2 = "Hello from thread 2!";
+    
+    pthread_mutex_init(&lock, NULL);
+    
+    pthread_create(&thread1, NULL, printMessage, (void *)message1);
+    pthread_create(&thread2, NULL, printMessage, (void *)message2);
+    
+    pthread_join(thread1, NULL);
+    pthread_join(thread2, NULL);
+    
+    pthread_mutex_destroy(&lock);
+    return 0;
+}
