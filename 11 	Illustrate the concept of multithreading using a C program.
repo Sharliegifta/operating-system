@@ -1,0 +1,18 @@
+// Task 11: Multithreading Example
+#include <stdio.h>
+#include <pthread.h>
+
+void *printMessage(void *msg) {
+    printf("%s\n", (char *)msg);
+    return NULL;
+}
+
+int main() {
+    pthread_t thread1;
+    char *message = "Hello from thread!";
+    
+    pthread_create(&thread1, NULL, printMessage, (void *)message);
+    pthread_join(thread1, NULL);
+    
+    return 0;
+}
