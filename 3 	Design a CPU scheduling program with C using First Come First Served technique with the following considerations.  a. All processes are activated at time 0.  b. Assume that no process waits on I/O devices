@@ -1,0 +1,41 @@
+// Task 3: First Come First Served CPU Scheduling
+#include <stdio.h>
+
+struct Process {
+    int id;
+    int burstTime;
+};
+
+void findWaitingTime(struct Process proc[], int n, int wait[]) {
+    wait[0] = 0;
+    for (int i = 1; i < n; i++) {
+        wait[i] = proc[i - 1].burstTime + wait[i - 1];
+    }
+}
+
+void findTurnAroundTime(struct Process proc[], int n, int wait[], int turnAround[]) {
+    for (int i = 0; i < n; i++) {
+        turnAround[i] = proc[i].burstTime + wait[i];
+    }
+}
+
+void findavgTime(struct Process proc[], int n) {
+    int wait[n], turnAround[n];
+    findWaitingTime(proc, n, wait);
+    findTurnAroundTime(proc, n, wait, turnAround);
+    
+    float totalWait = 0, totalTurnAround = 0;
+    for (int i = 0; i < n; i++) {
+        totalWait += wait[i];
+        totalTurnAround += turnAround[i];
+    }
+    printf("Average waiting time: %.2f\n", totalWait / n);
+    printf("Average turnaround time: %.2f\n", totalTurnAround / n);
+}
+
+int main() {
+    struct Process proc[] = { {1, 10}, {2, 5}, {3, 8} };
+    int n = sizeof(proc) / sizeof(proc[0]);
+    findavgTime(proc, n);
+    return 0;
+}
