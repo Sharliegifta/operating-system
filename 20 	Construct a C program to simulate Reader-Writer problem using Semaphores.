@@ -1,0 +1,53 @@
+// Task 20: Reader-Writer Problem using Semaphores
+#include <stdio.h>
+#include <pthread.h>
+#include <semaphore.h>
+#include <unistd.h>
+
+sem_t readLock, writeLock;
+int readCount = 0;
+
+void *reader(void *arg) {
+    sem_wait(&readLock);
+    readCount++;
+    if (readCount == 1) {
+        sem_wait(&writeLock);
+    }
+    sem_post(&readLock);
+
+    printf("Reader %d is reading.\n", *(int *)arg);
+    sleep(1);
+
+    sem_wait(&readLock);
+    readCount--;
+    if (readCount == 0) {
+        sem_post(&writeLock);
+    }
+    sem_post(&readLock);
+    return NULL;
+}
+
+void *writer(void *arg) {
+    sem_wait(&writeLock);
+    printf("Writer %d is writing.\n", *(int *)arg);
+    sleep(1);
+    sem_post(&writeLock);
+    return NULL;
+}
+
+int main() {
+    pthread_t r1, r2, w1;
+    int id1 = 1, id2 = 2, id3 = 1;
+
+    sem_init(&readLock, 0, 1);
+    sem_init(&writeLock, 0, 1);
+
+    pthread_create(&r1, NULL, reader, &id1);
+    pthread_create(&r2, NULL, reader, &id2);
+    pthread_create(&w1, NULL, writer, &id3);
+
+    pthread_join(r1, NULL);
+    pthread_join(r2, NULL);
+    pthread_join(w1, NULL);
+    return 0;
+}
