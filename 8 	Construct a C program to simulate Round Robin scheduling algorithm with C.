@@ -1,0 +1,48 @@
+// Task 8: Round Robin Scheduling
+#include <stdio.h>
+
+struct Process {
+    int id;
+    int burstTime;
+};
+
+void findavgTime(struct Process proc[], int n, int quantum) {
+    int wait[n], remaining[n];
+    for (int i = 0; i < n; i++) {
+        remaining[i] = proc[i].burstTime;
+        wait[i] = 0;
+    }
+
+    int time = 0;
+    while (1) {
+        bool done = true;
+        for (int i = 0; i < n; i++) {
+            if (remaining[i] > 0) {
+                done = false;
+                if (remaining[i] > quantum) {
+                    time += quantum;
+                    remaining[i] -= quantum;
+                } else {
+                    time += remaining[i];
+                    wait[i] = time - proc[i].burstTime;
+                    remaining[i] = 0;
+                }
+            }
+        }
+        if (done) break;
+    }
+
+    float totalWait = 0;
+    for (int i = 0; i < n; i++) {
+        totalWait += wait[i];
+    }
+    printf("Average waiting time: %.2f\n", totalWait / n);
+}
+
+int main() {
+    struct Process proc[] = { {1, 10}, {2, 5}, {3, 8} };
+    int n = sizeof(proc) / sizeof(proc[0]);
+    int quantum = 2;
+    findavgTime(proc, n, quantum);
+    return 0;
+}
