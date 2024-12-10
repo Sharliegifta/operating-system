@@ -1,0 +1,58 @@
+// Task 6: Preemptive Priority Scheduling
+#include <stdio.h>
+#include <stdbool.h>
+
+struct Process {
+    int id;
+    int burstTime;
+    int priority;
+};
+
+void findavgTime(struct Process proc[], int n) {
+    int wait[n], turnAround[n];
+    bool completed[n];
+    for (int i = 0; i < n; i++) {
+        completed[i] = false;
+        wait[i] = 0;
+    }
+
+    int time = 0, completedCount = 0;
+    while (completedCount < n) {
+        int idx = -1;
+        int maxPriority = -1;
+        for (int i = 0; i < n; i++) {
+            if (!completed[i] && proc[i].burstTime > 0 && proc[i].priority > maxPriority) {
+                maxPriority = proc[i].priority;
+                idx = i;
+            }
+        }
+
+        if (idx != -1) {
+            proc[idx].burstTime--;
+            time++;
+            if (proc[idx].burstTime == 0) {
+                completed[idx] = true;
+                completedCount++;
+                turnAround[idx] = time;
+                wait[idx] = turnAround[idx] - proc[idx].burstTime;
+            }
+        } else {
+            time++;
+        }
+    }
+
+    float totalWait = 0, totalTurnAround = 0;
+    for (int i = 0; i < n; i++) {
+        totalWait += wait[i];
+        totalTurnAround += turnAround[i];
+    }
+    printf("Average waiting time: %.2f\n", totalWait / n);
+    printf("Average turnaround time: %.2f\n", totalTurnAround / n);
+}
+
+int main() {
+    struct Process proc[] = { {1, 10, 2}, {2, 5, 1}, {3, 8, 3} };
+    int n = sizeof(proc) / sizeof(proc[0]);
+    findavgTime(proc, n);
+    return 0;
+}
