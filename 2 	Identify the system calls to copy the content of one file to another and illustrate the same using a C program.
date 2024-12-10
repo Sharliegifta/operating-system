@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void copyFile(const char *source, const char *destination) {
+    FILE *src = fopen(source, "r");
+    FILE *dest = fopen(destination, "w");
+    char ch;
+
+    if (src == NULL || dest == NULL) {
+        printf("Error opening files.\n");
+        exit(1);
+    }
+
+    while ((ch = fgetc(src)) != EOF) {
+        fputc(ch, dest);
+    }
+
+    fclose(src);
+    fclose(dest);
+}
+
+int main() {
+    copyFile("source.txt", "destination.txt");
+    return 0;
+}
