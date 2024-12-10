@@ -1,0 +1,46 @@
+// Task 7: Non-preemptive Shortest Job First Scheduling
+#include <stdio.h>
+
+struct Process {
+    int id;
+    int burstTime;
+};
+
+void findavgTime(struct Process proc[], int n) {
+    // Sort processes by burst time
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (proc[j].burstTime > proc[j + 1].burstTime) {
+                struct Process temp = proc[j];
+                proc[j] = proc[j + 1];
+                proc[j + 1] = temp;
+            }
+        }
+    }
+
+    int wait[n], turnAround[n];
+    wait[0] = 0;
+
+    for (int i = 1; i < n; i++) {
+        wait[i] = wait[i - 1] + proc[i - 1].burstTime;
+    }
+
+    for (int i = 0; i < n; i++) {
+        turnAround[i] = proc[i].burstTime + wait[i];
+    }
+
+    float totalWait = 0, totalTurnAround = 0;
+    for (int i = 0; i < n; i++) {
+        totalWait += wait[i];
+        totalTurnAround += turnAround[i];
+    }
+    printf("Average waiting time: %.2f\n", totalWait / n);
+    printf("Average turnaround time: %.2f\n", totalTurnAround / n);
+}
+
+int main() {
+    struct Process proc[] = { {1, 6}, {2, 8}, {3, 7}, {4, 3} };
+    int n = sizeof(proc) / sizeof(proc[0]);
+    findavgTime(proc, n);
+    return 0;
+}
