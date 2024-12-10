@@ -1,0 +1,28 @@
+// Task 16: Random Access File for Employee Details
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Employee {
+    int id;
+    char name[20];
+};
+
+int main() {
+    FILE *file;
+    struct Employee emp;
+
+    file = fopen("employees.dat", "wb+");
+    for (int i = 0; i < 5; i++) {
+        emp.id = i + 1;
+        sprintf(emp.name, "Employee%d", emp.id);
+        fwrite(&emp, sizeof(emp), 1, file);
+    }
+    fclose(file);
+
+    file = fopen("employees.dat", "rb");
+    while (fread(&emp, sizeof(emp), 1, file)) {
+        printf("ID: %d, Name: %s\n", emp.id, emp.name);
+    }
+    fclose(file);
+    return 0;
+}
